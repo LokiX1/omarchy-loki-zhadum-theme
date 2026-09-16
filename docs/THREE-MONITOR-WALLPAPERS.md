@@ -3,12 +3,16 @@
 Loki Osiris includes an optional static Hyprpaper profile with three coordinated
 wallpapers.
 
+![Loki Osiris three-monitor clean layout](../screenshots/loki-osiris-three-monitor-clean-layout.jpg)
+
 ![Loki Osiris three-monitor desktop](../screenshots/loki-osiris-three-monitor-desktop.png)
 
 ![Loki Osiris three-monitor wallpaper set](../screenshots/loki-osiris-three-monitor-wallpapers.jpg)
 
-The first preview shows the tested three-monitor layout. The second shows the
-three coordinated static backgrounds included with the theme.
+The first preview shows the complete three-monitor wallpaper layout without
+applications covering the backgrounds. The second shows Loki Osiris in active
+desktop use. The third shows the three coordinated static backgrounds included
+with the theme.
 
 ## Included images
 

@@ -229,7 +229,12 @@ DP-1  Center ultrawide        → Roche
 DP-3  Right portrait display  → Outland
 ```
 
+![Loki Osiris three-monitor clean layout](screenshots/loki-osiris-three-monitor-clean-layout.jpg)
+
 ![Loki Osiris three-monitor desktop](screenshots/loki-osiris-three-monitor-desktop.png)
+
+The first preview shows the three wallpapers without applications covering them.
+The second shows the same setup in active desktop use.
 
 The profile is intentionally opt-in because monitor connector names and display
 layouts vary between systems. It does not run automatically when the theme is
