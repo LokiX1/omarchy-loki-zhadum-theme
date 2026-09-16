@@ -1,0 +1,36 @@
+# Loki Osiris three-monitor static wallpaper profile.
+#
+# Requires: hyprpaper
+#
+# This example is for the author's display layout:
+#   DP-2 = left portrait display
+#   DP-1 = center 5120x2160 ultrawide display
+#   DP-3 = right portrait display
+#
+# Check your own names first:
+#   hyprctl monitors
+#
+# Copy this file to ~/.config/hypr/hyprpaper.conf and adjust:
+# - monitor names
+# - /home/loki path component
+# - paths if your installed theme directory differs
+
+splash = false
+
+wallpaper {
+  monitor = DP-2
+  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/caelum-left-portrait-2880x2880.jpg
+  fit_mode = cover
+}
+
+wallpaper {
+  monitor = DP-1
+  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/roche-center-5120x2880.jpg
+  fit_mode = cover
+}
+
+wallpaper {
+  monitor = DP-3
+  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/outland-right-portrait-2880x2880.jpg
+  fit_mode = cover
+}

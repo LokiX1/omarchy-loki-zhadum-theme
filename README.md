@@ -218,6 +218,26 @@ snippet rather than replacing your personal
 See [`docs/HYPRLAND-OPACITY.md`](docs/HYPRLAND-OPACITY.md) for the safe
 installation procedure.
 
+## Three-monitor wallpapers
+
+Loki Osiris includes an optional static Hyprpaper profile for a tested
+three-monitor layout:
+
+```text
+DP-2  Left portrait display   → Caelum
+DP-1  Center ultrawide        → Roche
+DP-3  Right portrait display  → Outland
+```
+
+![Loki Osiris three-monitor desktop](screenshots/loki-osiris-three-monitor-desktop.png)
+
+The profile is intentionally opt-in because monitor connector names and display
+layouts vary between systems. It does not run automatically when the theme is
+installed or selected.
+
+See [`docs/THREE-MONITOR-WALLPAPERS.md`](docs/THREE-MONITOR-WALLPAPERS.md) for
+installation, monitor-name checks, Hyprpaper setup, and compatibility notes.
+
 ## Update
 
 After pushing changes to this repository, update a previously installed Git
