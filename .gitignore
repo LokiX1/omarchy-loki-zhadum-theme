@@ -12,3 +12,8 @@
 
 # Local Crush agent state
 .crush/
+
+# Generated boot-branding previews and staging artifacts
+plymouth-build/
+*.preview.png
+*.stage/

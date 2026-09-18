@@ -1,9 +1,10 @@
-# Loki Osiris
+# Loki Zhadum
 
-A dark purple-black Omarchy theme derived from the Osiris palette, packaged as
-a safe theme-only repository for normal Omarchy installation.
+A dark purple-black Omarchy theme with Loki Zhadum branding, derived from the
+original Osiris palette and packaged as a safe theme-only repository for normal
+Omarchy installation.
 
-![Loki Osiris desktop preview](screenshots/loki-osiris-desktop.png)
+![Loki Zhadum desktop preview](screenshots/loki-osiris-desktop.png)
 
 ## Highlights
 
@@ -21,7 +22,7 @@ a safe theme-only repository for normal Omarchy installation.
 Install directly from GitHub:
 
 ```bash
-omarchy theme install https://github.com/LokiX1/omarchy-loki-osiris-theme.git
+omarchy theme install https://github.com/LokiX1/omarchy-loki-zhadum-theme.git
 ```
 
 Then select the theme:
@@ -41,7 +42,7 @@ find ~/.config/omarchy/themes \
 
 ## Scope and safety
 
-Loki Osiris is deliberately a **theme-only** package. It changes the palette and
+Loki Zhadum is deliberately a **theme-only** package. It changes the palette and
 theme assets, but does not replace personal desktop behavior or install
 executable customization.
 
@@ -58,6 +59,41 @@ It does **not** install or modify:
 
 This makes the theme safe to install without replacing the standard centered
 Omarchy menu or other personal shell customizations.
+
+## ZHADUM branding
+
+The repository includes canonical ZHADUM ASCII art for the Omarchy screensaver:
+
+```text
+branding/screensaver.txt
+```
+
+Install it manually after installing the theme:
+
+```bash
+install -Dm644 \
+  ~/.config/omarchy/themes/loki-osiris/branding/screensaver.txt \
+  ~/.config/omarchy/branding/screensaver.txt
+```
+
+![ZHADUM boot and screensaver preview](screenshots/loki-zhadum-boot-screensaver.png)
+
+An optional Plymouth boot/unlock glitch-reveal generator is also included:
+
+```text
+scripts/zhadum-plymouth-glitch
+```
+
+It is deliberately opt-in because it changes the system boot theme, writes under
+`/usr/share`, and rebuilds the initramfs. Review and preview it before running:
+
+```bash
+cd ~/.config/omarchy/themes/loki-osiris
+STAGE_ONLY=1 KEEP_STAGE=1 ./scripts/zhadum-plymouth-glitch
+```
+
+See [`docs/BOOT-BRANDING.md`](docs/BOOT-BRANDING.md) for screensaver setup,
+safe preview, installation, requirements, and restoration instructions.
 
 ## Wallpaper
 
