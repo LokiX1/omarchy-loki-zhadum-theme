@@ -1,7 +1,7 @@
 # Loki Zhadum
 
-A dark purple-black Omarchy theme with Loki Zhadum branding, derived from the
-original Osiris palette and packaged as a safe theme-only repository for normal
+A dark purple-black Omarchy theme with Loki Zhadum branding, derived from a
+dark-purple palette and packaged as a safe theme-only repository for normal
 Omarchy installation.
 
 ![Loki Zhadum desktop preview](screenshots/loki-zhadum-desktop.png)
@@ -37,7 +37,7 @@ theme names and use the one returned:
 ```bash
 find ~/.config/omarchy/themes \
   -mindepth 1 -maxdepth 1 -type d \
-  -printf '%f\n' | sort | grep -i 'loki\|osiris'
+  -printf '%f\n' | sort | grep -i 'loki\|zhadum' 
 ```
 
 ## Scope and safety
@@ -154,7 +154,7 @@ The Classic LED visualizer maps:
 
 ```text
 Lower spectrum  → indigo-violet
-Middle spectrum → Osiris magenta
+Middle spectrum → magenta
 Peaks           → bright pink
 ```
 
@@ -292,12 +292,6 @@ omarchy theme set loki-zhadum
 Reapplying the theme refreshes Omarchy-generated color-dependent application
 settings.
 
-## Credits
-
-The theme palette is based on the Osiris aesthetic and adapted for a
-theme-only Omarchy workflow. Wallpaper attribution is documented in
-[`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
-
 ## Qutebrowser companion
 
 Loki Zhadum includes an optional opaque Qutebrowser UI preset and a companion
@@ -308,3 +302,10 @@ desktop-wide inactive fade if configured in Hyprland.
 - Opaque UI preset: [`qutebrowser/theme.py`](qutebrowser/theme.py)
 - Setup and recovery guide: [`docs/QUTEBROWSER.md`](docs/QUTEBROWSER.md)
 - Hyprland companion: [`docs/HYPRLAND-OPACITY.md`](docs/HYPRLAND-OPACITY.md)
+
+## Credits
+
+The theme palette was originally based on the Osiris aesthetic and adapted for a
+theme-only Omarchy workflow. Wallpaper attribution is documented in
+[`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
+
