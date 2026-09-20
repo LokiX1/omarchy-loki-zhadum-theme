@@ -1,35 +1,46 @@
 # Hyprland opacity companion
 
-Loki Osiris includes an optional Hyprland rule snippet for a subtle
-inactive-window fade. It is not applied automatically, because Omarchy 4.0.3
-defines the default opacity rules outside the theme template system.
+Loki Zhadum includes an optional Hyprland rule snippet for a subtle
+inactive-window fade. Omarchy defines default window opacity rules outside the
+theme-template system, so this companion is intentionally opt-in.
 
-## Included snippet
+The snippet is:
 
 ```text
-extras/hypr/loki-osiris-opacity.lua
+extras/hypr/loki-zhadum-opacity.lua
 ```
 
 ## Behavior
 
 - Focused normal windows: 1.00 opacity
-- Inactive normal windows: 0.98 opacity
-- Inactive Chromium- and Firefox-family browsers: 0.98 opacity
+- Inactive normal windows: 0.99 opacity
+- Inactive Chromium- and Firefox-family browsers: 0.99 opacity
+- Qutebrowser: 1.00 opacity through its own rule
 - Video-playing windows: 1.00 opacity
+
+A global Hyprland `inactive_opacity` setting can still provide a gentle visual
+fade to any unfocused window, including Qutebrowser.
 
 ## Install
 
-Back up your current personal Hyprland rules:
+Back up your active Hyprland look-and-feel configuration:
 
 ```bash
-cp -av \
-  ~/.config/hypr/looknfeel.lua \
-  ~/.config/hypr/looknfeel.lua.before-loki-osiris-opacity
+cp ~/.config/hypr/looknfeel.lua \
+  ~/.config/hypr/looknfeel.lua.before-loki-zhadum-opacity
 ```
 
-Open `~/.config/hypr/looknfeel.lua`, find the existing `default-opacity` and
-browser rules, and change the inactive values to `0.98`. Do not add duplicate
-rules if equivalent rules already exist.
+Open the file in Neovim:
+
+```bash
+nvim ~/.config/hypr/looknfeel.lua
+```
+
+Copy the reviewed rules from:
+
+```text
+~/.config/omarchy/themes/loki-zhadum/extras/hypr/loki-zhadum-opacity.lua
+```
 
 Reload Hyprland:
 
@@ -37,16 +48,32 @@ Reload Hyprland:
 hyprctl reload
 ```
 
-## Values
+Some opacity behavior is assigned when a client opens, so restart applications
+you want to retest.
 
-- `0.96`: clearly visible fade
-- `0.97`: subtle fade
-- `0.98`: very subtle fade
-- `1.00`: no inactive-window fade
+## Qutebrowser fix
 
-## Loki Osiris tested values
+Qutebrowser’s Hyprland class is:
 
-The Loki Osiris desktop uses the `0.98` inactive opacity values documented
-above. This is intentionally distributed as a companion snippet because
-Omarchy 4.0.3 keeps the default opacity rules outside the theme template
-system.
+```text
+org.qutebrowser.qutebrowser
+```
+
+Do not use a terminal-style Qutebrowser rule such as:
+
+```lua
+opacity = "0.90 0.85"
+```
+
+It makes the browser uncomfortably transparent. Use the reviewed rule included
+in the companion instead:
+
+```lua
+o.window("^org%.qutebrowser%.qutebrowser$", {
+  tag = "-default-opacity",
+  opacity = "1.0 override 1.0 override",
+})
+```
+
+See [`QUTEBROWSER.md`](QUTEBROWSER.md) for the matching opaque Qutebrowser UI
+preset.

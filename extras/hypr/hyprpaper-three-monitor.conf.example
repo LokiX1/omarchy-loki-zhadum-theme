@@ -1,4 +1,4 @@
-# Loki Osiris three-monitor static wallpaper profile.
+# Loki Zhadum three-monitor static wallpaper profile.
 #
 # Requires: hyprpaper
 #
@@ -19,18 +19,18 @@ splash = false
 
 wallpaper {
   monitor = DP-2
-  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/caelum-left-portrait-2880x2880.jpg
+  path = /home/loki/.config/omarchy/themes/loki-zhadum/backgrounds/three-monitor/caelum-left-portrait-2880x2880.jpg
   fit_mode = cover
 }
 
 wallpaper {
   monitor = DP-1
-  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/roche-center-5120x2880.jpg
+  path = /home/loki/.config/omarchy/themes/loki-zhadum/backgrounds/three-monitor/roche-center-5120x2880.jpg
   fit_mode = cover
 }
 
 wallpaper {
   monitor = DP-3
-  path = /home/loki/.config/omarchy/themes/loki-osiris/backgrounds/three-monitor/outland-right-portrait-2880x2880.jpg
+  path = /home/loki/.config/omarchy/themes/loki-zhadum/backgrounds/three-monitor/outland-right-portrait-2880x2880.jpg
   fit_mode = cover
 }

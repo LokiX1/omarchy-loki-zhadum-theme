@@ -1,12 +1,12 @@
 # Starship companion preset
 
-The Starship prompt configuration is optional. Installing the Loki Osiris
+The Starship prompt configuration is optional. Installing the Loki Zhadum
 Omarchy theme does not automatically replace an existing Bash prompt.
 
 ## Included file
 
 ```text
-starship/loki-osiris.toml
+starship/loki-zhadum.toml
 ```
 
 ## Requirements
@@ -19,10 +19,10 @@ eval "$(starship init bash)"
 
 ## Preview without changing your default config
 
-Start a temporary interactive Bash session that loads the Loki Osiris preset:
+Start a temporary interactive Bash session that loads the Loki Zhadum preset:
 
 ```bash
-STARSHIP_CONFIG=~/.config/omarchy/themes/loki-osiris/starship/loki-osiris.toml \
+STARSHIP_CONFIG=~/.config/omarchy/themes/loki-zhadum/starship/loki-zhadum.toml \
   bash --noprofile --rcfile ~/.bashrc -i
 ```
 
@@ -39,14 +39,14 @@ Back up your existing configuration:
 ```bash
 cp -av \
   ~/.config/starship.toml \
-  ~/.config/starship.toml.before-loki-osiris
+  ~/.config/starship.toml.before-loki-zhadum
 ```
 
 Then install the preset:
 
 ```bash
 cp \
-  ~/.config/omarchy/themes/loki-osiris/starship/loki-osiris.toml \
+  ~/.config/omarchy/themes/loki-zhadum/starship/loki-zhadum.toml \
   ~/.config/starship.toml
 ```
 
@@ -59,7 +59,7 @@ To use the theme preset without replacing `~/.config/starship.toml`, export
 
 ```bash
 export STARSHIP_CONFIG=\
-"$HOME/.config/omarchy/themes/loki-osiris/starship/loki-osiris.toml"
+"$HOME/.config/omarchy/themes/loki-zhadum/starship/loki-zhadum.toml"
 ```
 
 To remove the override later, delete or comment out that `export` line and

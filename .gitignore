@@ -17,3 +17,9 @@
 plymouth-build/
 *.preview.png
 *.stage/
+
+# Local editing backups
+.local-backups/
+
+# Local editing backups
+.local-backups/

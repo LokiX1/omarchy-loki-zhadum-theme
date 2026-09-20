@@ -4,7 +4,7 @@ A dark purple-black Omarchy theme with Loki Zhadum branding, derived from the
 original Osiris palette and packaged as a safe theme-only repository for normal
 Omarchy installation.
 
-![Loki Zhadum desktop preview](screenshots/loki-osiris-desktop.png)
+![Loki Zhadum desktop preview](screenshots/loki-zhadum-desktop.png)
 
 ## Highlights
 
@@ -28,7 +28,7 @@ omarchy theme install https://github.com/LokiX1/omarchy-loki-zhadum-theme.git
 Then select the theme:
 
 ```bash
-omarchy theme set loki-osiris
+omarchy theme set loki-zhadum
 ```
 
 If your Omarchy version chooses a different installed directory name, list likely
@@ -72,7 +72,7 @@ Install it manually after installing the theme:
 
 ```bash
 install -Dm644 \
-  ~/.config/omarchy/themes/loki-osiris/branding/screensaver.txt \
+  ~/.config/omarchy/themes/loki-zhadum/branding/screensaver.txt \
   ~/.config/omarchy/branding/screensaver.txt
 ```
 
@@ -88,7 +88,7 @@ It is deliberately opt-in because it changes the system boot theme, writes under
 `/usr/share`, and rebuilds the initramfs. Review and preview it before running:
 
 ```bash
-cd ~/.config/omarchy/themes/loki-osiris
+cd ~/.config/omarchy/themes/loki-zhadum
 STAGE_ONLY=1 KEEP_STAGE=1 ./scripts/zhadum-plymouth-glitch
 ```
 
@@ -126,7 +126,7 @@ bright_magenta = "#d8ace8"
 Change `background` to adjust the overall darkness, then reapply the theme:
 
 ```bash
-omarchy theme set loki-osiris
+omarchy theme set loki-zhadum
 ```
 
 ## CLIamp companion theme
@@ -135,7 +135,7 @@ An optional CLIamp companion theme for the **Classic LED** visualizer is
 included:
 
 ```text
-extras/cliamp/loki-osiris-led.toml
+extras/cliamp/loki-zhadum-led.toml
 ```
 
 Install it manually:
@@ -144,11 +144,11 @@ Install it manually:
 mkdir -p ~/.config/cliamp/themes
 
 cp \
-  ~/.config/omarchy/themes/loki-osiris/extras/cliamp/loki-osiris-led.toml \
+  ~/.config/omarchy/themes/loki-zhadum/extras/cliamp/loki-zhadum-led.toml \
   ~/.config/cliamp/themes/
 ```
 
-Start CLIamp, play audio, press `t`, select `loki-osiris-led`, and press Enter.
+Start CLIamp, play audio, press `t`, select `loki-zhadum-led`, and press Enter.
 
 The Classic LED visualizer maps:
 
@@ -165,18 +165,18 @@ See [`docs/CLIAMP.md`](docs/CLIAMP.md) for companion-theme details.
 An optional Fastfetch configuration and portrait asset are included:
 
 ```text
-fastfetch/loki-osiris.jsonc
-fastfetch/images/loki-osiris.png
+fastfetch/loki-zhadum.jsonc
+fastfetch/images/loki-zhadum.png
 ```
 
-![Loki Osiris Fastfetch and Starship preview](screenshots/loki-osiris-fastfetch-starship.png)
+![Loki Zhadum Fastfetch and Starship preview](screenshots/loki-zhadum-fastfetch-starship.png)
 
 The preset is designed for Kitty image rendering. Preview it without replacing
 your existing Fastfetch configuration:
 
 ```bash
 fastfetch --config \
-  ~/.config/omarchy/themes/loki-osiris/fastfetch/loki-osiris.jsonc
+  ~/.config/omarchy/themes/loki-zhadum/fastfetch/loki-zhadum.jsonc
 ```
 
 To use it as your default Fastfetch configuration:
@@ -185,11 +185,11 @@ To use it as your default Fastfetch configuration:
 mkdir -p ~/.config/fastfetch/images
 
 cp \
-  ~/.config/omarchy/themes/loki-osiris/fastfetch/images/loki-osiris.png \
-  ~/.config/fastfetch/images/loki-osiris.png
+  ~/.config/omarchy/themes/loki-zhadum/fastfetch/images/loki-zhadum.png \
+  ~/.config/fastfetch/images/loki-zhadum.png
 
 cp \
-  ~/.config/omarchy/themes/loki-osiris/fastfetch/loki-osiris.jsonc \
+  ~/.config/omarchy/themes/loki-zhadum/fastfetch/loki-zhadum.jsonc \
   ~/.config/fastfetch/config.jsonc
 ```
 
@@ -202,13 +202,13 @@ rows, and padding of 1 top row plus 2 columns on each side. See
 An optional Starship prompt configuration for Bash is included:
 
 ```text
-starship/loki-osiris.toml
+starship/loki-zhadum.toml
 ```
 
 Preview it in a temporary Bash shell:
 
 ```bash
-STARSHIP_CONFIG=~/.config/omarchy/themes/loki-osiris/starship/loki-osiris.toml \
+STARSHIP_CONFIG=~/.config/omarchy/themes/loki-zhadum/starship/loki-zhadum.toml \
   bash --noprofile --rcfile ~/.bashrc -i
 ```
 
@@ -218,10 +218,10 @@ Starship config:
 ```bash
 cp -av \
   ~/.config/starship.toml \
-  ~/.config/starship.toml.before-loki-osiris
+  ~/.config/starship.toml.before-loki-zhadum
 
 cp \
-  ~/.config/omarchy/themes/loki-osiris/starship/loki-osiris.toml \
+  ~/.config/omarchy/themes/loki-zhadum/starship/loki-zhadum.toml \
   ~/.config/starship.toml
 ```
 
@@ -231,14 +231,14 @@ See [`docs/STARSHIP.md`](docs/STARSHIP.md) for temporary and persistent
 
 ## Hyprland opacity companion
 
-Loki Osiris includes an optional Hyprland rule snippet for a subtle
+Loki Zhadum includes an optional Hyprland rule snippet for a subtle
 inactive-window fade:
 
 ```text
-extras/hypr/loki-osiris-opacity.lua
+extras/hypr/loki-zhadum-opacity.lua
 ```
 
-The snippet matches the Loki Osiris desktop preference:
+The snippet matches the Loki Zhadum desktop preference:
 
 - Focused normal windows: 1.00 opacity
 - Inactive normal windows: 0.98 opacity
@@ -256,7 +256,7 @@ installation procedure.
 
 ## Three-monitor wallpapers
 
-Loki Osiris includes an optional static Hyprpaper profile for a tested
+Loki Zhadum includes an optional static Hyprpaper profile for a tested
 three-monitor layout:
 
 ```text
@@ -265,9 +265,9 @@ DP-1  Center ultrawide        → Roche
 DP-3  Right portrait display  → Outland
 ```
 
-![Loki Osiris three-monitor clean layout](screenshots/loki-osiris-three-monitor-clean-layout.jpg)
+![Loki Zhadum three-monitor clean layout](screenshots/loki-zhadum-three-monitor-clean-layout.jpg)
 
-![Loki Osiris three-monitor desktop](screenshots/loki-osiris-three-monitor-desktop.png)
+![Loki Zhadum three-monitor desktop](screenshots/loki-zhadum-three-monitor-desktop.png)
 
 The first preview shows the three wallpapers without applications covering them.
 The second shows the same setup in active desktop use.
@@ -286,7 +286,7 @@ theme with:
 
 ```bash
 omarchy theme update
-omarchy theme set loki-osiris
+omarchy theme set loki-zhadum
 ```
 
 Reapplying the theme refreshes Omarchy-generated color-dependent application
@@ -297,3 +297,14 @@ settings.
 The theme palette is based on the Osiris aesthetic and adapted for a
 theme-only Omarchy workflow. Wallpaper attribution is documented in
 [`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
+
+## Qutebrowser companion
+
+Loki Zhadum includes an optional opaque Qutebrowser UI preset and a companion
+Hyprland opacity rule. This prevents the browser from inheriting an overly
+strong terminal-style `0.90 / 0.85` opacity rule while retaining a subtle
+desktop-wide inactive fade if configured in Hyprland.
+
+- Opaque UI preset: [`qutebrowser/theme.py`](qutebrowser/theme.py)
+- Setup and recovery guide: [`docs/QUTEBROWSER.md`](docs/QUTEBROWSER.md)
+- Hyprland companion: [`docs/HYPRLAND-OPACITY.md`](docs/HYPRLAND-OPACITY.md)

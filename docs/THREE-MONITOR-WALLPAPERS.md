@@ -1,16 +1,16 @@
 # Three-monitor wallpapers
 
-Loki Osiris includes an optional static Hyprpaper profile with three coordinated
+Loki Zhadum includes an optional static Hyprpaper profile with three coordinated
 wallpapers.
 
-![Loki Osiris three-monitor clean layout](../screenshots/loki-osiris-three-monitor-clean-layout.jpg)
+![Loki Zhadum three-monitor clean layout](../screenshots/loki-zhadum-three-monitor-clean-layout.jpg)
 
-![Loki Osiris three-monitor desktop](../screenshots/loki-osiris-three-monitor-desktop.png)
+![Loki Zhadum three-monitor desktop](../screenshots/loki-zhadum-three-monitor-desktop.png)
 
-![Loki Osiris three-monitor wallpaper set](../screenshots/loki-osiris-three-monitor-wallpapers.jpg)
+![Loki Zhadum three-monitor wallpaper set](../screenshots/loki-zhadum-three-monitor-wallpapers.jpg)
 
 The first preview shows the complete three-monitor wallpaper layout without
-applications covering the backgrounds. The second shows Loki Osiris in active
+applications covering the backgrounds. The second shows Loki Zhadum in active
 desktop use. The third shows the three coordinated static backgrounds included
 with the theme.
 
@@ -54,7 +54,7 @@ Back up an existing Hyprpaper config first:
 test -f ~/.config/hypr/hyprpaper.conf && \
   cp -av \
     ~/.config/hypr/hyprpaper.conf \
-    ~/.config/hypr/hyprpaper.conf.before-loki-osiris
+    ~/.config/hypr/hyprpaper.conf.before-loki-zhadum
 ```
 
 The example uses the author's `DP-1`, `DP-2`, and `DP-3` output names and
@@ -67,7 +67,7 @@ Copy the example:
 mkdir -p ~/.config/hypr
 
 cp \
-  ~/.config/omarchy/themes/loki-osiris/extras/hypr/hyprpaper-three-monitor.conf.example \
+  ~/.config/omarchy/themes/loki-zhadum/extras/hypr/hyprpaper-three-monitor.conf.example \
   ~/.config/hypr/hyprpaper.conf
 ```
 
