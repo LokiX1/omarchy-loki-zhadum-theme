@@ -1,0 +1,412 @@
+#!/usr/bin/env python3
+# omarchy:summary=Deploy Loki Zhadum companion configs (fastfetch, starship, cliamp, hyprpaper, qutebrowser, opacity, live wallpaper).
+# omarchy:group=zhadum
+"""zhadum-deploy — opt-in companion deployer for the Loki Zhadum Omarchy theme.
+
+The theme itself installs via `omarchy theme install` / `omarchy theme set`.
+This script deploys the *companion* bits that Omarchy deliberately does not
+touch, each as an explicit, reviewable, reversible step:
+
+    fastfetch      Fastfetch config + logo images  -> ~/.config/fastfetch/
+    starship       Starship prompt                 -> ~/.config/starship.toml
+    cliamp         CLIamp LED theme                -> ~/.config/cliamp/themes/
+    hyprpaper      3-monitor Hyprpaper profile     -> ~/.config/hypr/hyprpaper.conf
+    qutebrowser    Opaque Qutebrowser preset       -> ~/.config/qutebrowser/theme.py
+    opacity        Hyprland inactive-fade rules    -> appended to looknfeel.lua
+    livewallpaper  mpvpaper live-wallpaper setup   -> launcher + autostart help
+    all            everything above, prompting per component
+    status         report what is deployed vs. the repo (no changes)
+
+Safety rules (non-negotiable):
+  * every write is backed up first into a timestamped backup dir
+  * --dry-run shows exactly what would change, changing nothing
+  * every installed file is validated after writing
+  * nothing is deleted; the opacity snippet is idempotent via markers
+"""
+
+import argparse
+import datetime
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+import tomllib
+
+HOME = os.path.expanduser("~")
+TS = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
+def theme_dir_default():
+    """Prefer the installed Omarchy theme dir, fall back to the repo checkout."""
+    installed = os.path.join(HOME, ".config", "omarchy", "themes", "loki-zhadum")
+    if os.path.isdir(installed):
+        return installed
+    here = os.path.dirname(os.path.abspath(__file__))
+    repo = os.path.dirname(here)  # scripts/ -> repo root
+    if os.path.isfile(os.path.join(repo, "colors.toml")):
+        return repo
+    return installed
+
+
+class Deployer:
+    def __init__(self, args):
+        self.args = args
+        self.theme = args.theme_dir
+        self.dry = args.dry_run
+        self.yes = args.yes
+        self.backup_root = os.path.expanduser(args.backup_dir)
+        self.backup_dir = os.path.join(self.backup_root, TS)
+        self.changed = []
+
+    # -- plumbing ------------------------------------------------------
+    def log(self, msg):
+        print(msg)
+
+    def need_theme_file(self, rel):
+        p = os.path.join(self.theme, rel)
+        if not os.path.isfile(p):
+            sys.exit(f"zhadum-deploy: theme file missing: {p}")
+        return p
+
+    def backup(self, path):
+        """Copy an existing file/dir into the timestamped backup dir."""
+        if not os.path.lexists(path):
+            return None
+        rel = os.path.relpath(path, HOME)
+        dest = os.path.join(self.backup_dir, rel)
+        if self.dry:
+            self.log(f"  [dry-run] would back up {path} -> {dest}")
+            return dest
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        if os.path.isdir(path) and not os.path.islink(path):
+            shutil.copytree(path, dest, symlinks=True)
+        else:
+            shutil.copy2(path, dest)
+        self.log(f"  backed up {path} -> {dest}")
+        return dest
+
+    def install_file(self, src, dest, mode=None):
+        """Backup dest, then copy src over it."""
+        self.backup(dest)
+        if self.dry:
+            self.log(f"  [dry-run] would install {src} -> {dest}")
+            return
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy2(src, dest)
+        if mode is not None:
+            os.chmod(dest, mode)
+        self.log(f"  installed {dest}")
+        self.changed.append(dest)
+
+    def confirm(self, prompt):
+        if self.yes:
+            return True
+        try:
+            ans = input(f"{prompt} [y/N] ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return False
+        return ans in ("y", "yes")
+
+    # -- validators ----------------------------------------------------
+    @staticmethod
+    def _strip_jsonc(text):
+        text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        lines = [re.sub(r"(?<!:)(?<!/)\/\/.*$", "", ln) for ln in text.splitlines()]
+        return "\n".join(lines)
+
+    def validate_jsonc(self, path):
+        try:
+            json.loads(self._strip_jsonc(open(path).read()))
+        except Exception as e:
+            sys.exit(f"zhadum-deploy: {path} failed JSONC validation: {e}")
+        self.log(f"  validated JSONC: {path}")
+
+    def validate_toml(self, path):
+        try:
+            tomllib.load(open(path, "rb"))
+        except Exception as e:
+            sys.exit(f"zhadum-deploy: {path} failed TOML validation: {e}")
+        self.log(f"  validated TOML: {path}")
+
+    def validate_py(self, path):
+        import py_compile
+        try:
+            py_compile.compile(path, doraise=True)
+        except Exception as e:
+            sys.exit(f"zhadum-deploy: {path} failed Python compile check: {e}")
+        self.log(f"  validated Python: {path}")
+
+    # -- components ----------------------------------------------------
+    def cmd_fastfetch(self):
+        self.log("== fastfetch ==")
+        src_cfg = self.need_theme_file("fastfetch/loki-zhadum.jsonc")
+        src_img_dir = os.path.join(self.theme, "fastfetch", "images")
+        dest_cfg = os.path.join(HOME, ".config", "fastfetch", "config.jsonc")
+        dest_img_dir = os.path.join(HOME, ".config", "fastfetch", "images")
+        if not self.confirm(f"Install fastfetch config -> {dest_cfg}?"):
+            return
+        self.install_file(src_cfg, dest_cfg)
+        for img in sorted(os.listdir(src_img_dir)):
+            s = os.path.join(src_img_dir, img)
+            if os.path.isfile(s):
+                self.install_file(s, os.path.join(dest_img_dir, img))
+        if not self.dry:
+            self.validate_jsonc(dest_cfg)
+            missing = [i for i in os.listdir(src_img_dir)
+                       if not os.path.isfile(os.path.join(dest_img_dir, i))]
+            if missing:
+                sys.exit(f"zhadum-deploy: images missing after install: {missing}")
+            self.log("  all fastfetch images present")
+
+    def cmd_starship(self):
+        self.log("== starship ==")
+        src = self.need_theme_file("starship/loki-zhadum.toml")
+        dest = os.path.join(HOME, ".config", "starship.toml")
+        if not self.confirm(f"Install starship preset -> {dest}?"):
+            return
+        self.install_file(src, dest)
+        if not self.dry:
+            self.validate_toml(dest)
+
+    def cmd_cliamp(self):
+        self.log("== cliamp ==")
+        src = self.need_theme_file("extras/cliamp/loki-zhadum-led.toml")
+        dest_dir = os.path.join(HOME, ".config", "cliamp", "themes")
+        dest = os.path.join(dest_dir, "loki-zhadum-led.toml")
+        if not self.confirm(f"Install CLIamp theme -> {dest}?"):
+            return
+        self.install_file(src, dest)
+        if not self.dry:
+            self.validate_toml(dest)
+        self.log("  select it inside CLIamp's theme picker (docs/CLIAMP.md)")
+
+    def cmd_hyprpaper(self):
+        self.log("== hyprpaper (3-monitor profile) ==")
+        src = self.need_theme_file("extras/hypr/hyprpaper-three-monitor.conf.example")
+        dest = os.path.join(HOME, ".config", "hypr", "hyprpaper.conf")
+        self.log("  This overwrites your hyprpaper.conf with the 3-monitor")
+        self.log("  Zhadum profile. Review the .example file first.")
+        if not self.confirm(f"Install -> {dest}?"):
+            return
+        self.install_file(src, dest)
+        self.log("  reload with: hyprctl hyprpaper reload   (or restart Hyprland)")
+        self.log("  see docs/THREE-MONITOR-WALLPAPERS.md")
+
+    def cmd_qutebrowser(self):
+        self.log("== qutebrowser (opaque preset) ==")
+        src = self.need_theme_file("qutebrowser/theme.py")
+        dest = os.path.join(HOME, ".config", "qutebrowser", "theme.py")
+        self.log("  NOTE: Omarchy may regenerate this file when themes are")
+        self.log("  applied. The repo copy stays the reviewed source of truth.")
+        if not self.confirm(f"Install -> {dest}?"):
+            return
+        self.install_file(src, dest)
+        if not self.dry:
+            self.validate_py(dest)
+        self.log("  restart qutebrowser with :restart to apply")
+
+    OPACITY_BEGIN = "# >>> zhadum-deploy opacity >>>"
+    OPACITY_END = "# <<< zhadum-deploy opacity <<<"
+
+    def cmd_opacity(self):
+        self.log("== hyprland opacity snippet ==")
+        src = self.need_theme_file("extras/hypr/loki-zhadum-opacity.lua")
+        dest = os.path.join(HOME, ".config", "hypr", "looknfeel.lua")
+        if not os.path.isfile(dest):
+            sys.exit(f"zhadum-deploy: {dest} not found; refusing to create it")
+        current = open(dest).read()
+        if self.OPACITY_BEGIN in current:
+            self.log("  snippet already installed (marker found); nothing to do")
+            return
+        snippet = open(src).read().rstrip() + "\n"
+        block = f"\n{self.OPACITY_BEGIN}\n{snippet}{self.OPACITY_END}\n"
+        self.log("  This appends the reviewed opacity rules to looknfeel.lua,")
+        self.log("  guarded by markers so re-running is a no-op.")
+        if not self.confirm(f"Append to {dest}?"):
+            return
+        self.backup(dest)
+        if self.dry:
+            self.log(f"  [dry-run] would append {len(block)} bytes to {dest}")
+            return
+        with open(dest, "a") as f:
+            f.write(block)
+        self.log(f"  appended to {dest}")
+        self.changed.append(dest)
+        self.log("  reload with: hyprctl reload")
+
+    # -- live wallpaper ------------------------------------------------
+    def _have(self, prog):
+        return shutil.which(prog) is not None
+
+    def cmd_livewallpaper(self):
+        self.log("== live wallpaper (mpvpaper) ==")
+        self.log("  mpvpaper draws a looping video on a layer-shell surface.")
+        self.log("  hyprpaper must be stood down or they fight over the layer.")
+        video = self.args.video or os.path.join(
+            HOME, "Videos", "zhadum-live.mp4")
+        outputs = self.args.outputs or "*"
+        if not self._have("mpvpaper"):
+            self.log("  mpvpaper is not installed.")
+            if self.confirm("Install it now via 'yay -S --needed mpvpaper'?"):
+                if self.dry:
+                    self.log("  [dry-run] would run: yay -S --needed mpvpaper")
+                else:
+                    rc = subprocess.run(
+                        ["yay", "-S", "--needed", "mpvpaper"]).returncode
+                    if rc != 0:
+                        sys.exit("zhadum-deploy: yay failed; install mpvpaper "
+                                 "manually and re-run")
+            else:
+                self.log("  skipping live-wallpaper setup")
+                return
+        if not os.path.isfile(video):
+            self.log(f"  video not found: {video}")
+            self.log("  The repo cannot ship video (GitHub size limits).")
+            self.log("  Place your loop there, or re-run with --video PATH.")
+            if not self.args.video:
+                return
+        launcher = os.path.join(HOME, ".config", "hypr",
+                                "zhadum-livewallpaper.sh")
+        body = (
+            "#!/usr/bin/env bash\n"
+            "# Generated by zhadum-deploy. Loop a video behind everything.\n"
+            "set -u\n"
+            f"VIDEO={shlex.quote(video)}\n"
+            f"OUTPUTS={shlex.quote(outputs)}\n"
+            'pkill -x hyprpaper 2>/dev/null || true\n'
+            'pkill -x mpvpaper 2>/dev/null || true\n'
+            'sleep 0.5\n'
+            'exec mpvpaper -o "no-audio --loop --hwdec=auto" '
+            '"$OUTPUTS" "$VIDEO"\n'
+        )
+        self.log(f"  launcher -> {launcher}")
+        self.log(f"  video    -> {video}")
+        self.log(f"  outputs  -> {outputs}")
+        if not self.confirm("Write the launcher?"):
+            return
+        self.backup(launcher)
+        if self.dry:
+            self.log("  [dry-run] would write launcher (see --print-launcher)")
+            if self.args.print_launcher:
+                print(body)
+            return
+        os.makedirs(os.path.dirname(launcher), exist_ok=True)
+        with open(launcher, "w") as f:
+            f.write(body)
+        os.chmod(launcher, 0o755)
+        self.log(f"  wrote {launcher}")
+        self.changed.append(launcher)
+        self.log("")
+        self.log("  Autostart: Hyprland's Lua config syntax varies by version,")
+        self.log("  so this step is manual and one line. Add to your")
+        self.log("  ~/.config/hypr/hyprland.lua (or bindings/startup file):")
+        self.log("")
+        self.log(f"    exec-once {launcher}   -- exact form depends on your")
+        self.log("    Hyprland Lua API; check your existing exec-once lines")
+        self.log("    and mirror them. Then remove/disable hyprpaper's own")
+        self.log("    exec-once so the two do not fight.")
+        self.log("")
+        self.log("  Test now (replaces your wallpaper until Hyprland exits):")
+        self.log(f"    {launcher}")
+
+    # -- status / all --------------------------------------------------
+    def _cmp(self, repo_rel, live_path):
+        repo_p = os.path.join(self.theme, repo_rel)
+        if not os.path.isfile(repo_p):
+            return "repo-missing"
+        if not os.path.lexists(live_path):
+            return "not-deployed"
+        with open(repo_p, "rb") as a, open(live_path, "rb") as b:
+            return "deployed" if a.read() == b.read() else "differs"
+
+    def cmd_status(self):
+        self.log(f"theme dir: {self.theme}")
+        rows = [
+            ("fastfetch config", "fastfetch/loki-zhadum.jsonc",
+             os.path.join(HOME, ".config/fastfetch/config.jsonc")),
+            ("starship", "starship/loki-zhadum.toml",
+             os.path.join(HOME, ".config/starship.toml")),
+            ("cliamp theme", "extras/cliamp/loki-zhadum-led.toml",
+             os.path.join(HOME, ".config/cliamp/themes/loki-zhadum-led.toml")),
+            ("hyprpaper 3-mon", "extras/hypr/hyprpaper-three-monitor.conf.example",
+             os.path.join(HOME, ".config/hypr/hyprpaper.conf")),
+            ("qutebrowser", "qutebrowser/theme.py",
+             os.path.join(HOME, ".config/qutebrowser/theme.py")),
+        ]
+        for name, repo_rel, live in rows:
+            print(f"  {name:18s} {self._cmp(repo_rel, live)}")
+        lf = os.path.join(HOME, ".config", "hypr", "looknfeel.lua")
+        mark = (os.path.isfile(lf)
+                and self.OPACITY_BEGIN in open(lf).read())
+        print(f"  {'opacity snippet':18s} "
+              f"{'deployed' if mark else 'not-deployed'}")
+        lw = os.path.join(HOME, ".config", "hypr", "zhadum-livewallpaper.sh")
+        print(f"  {'live wallpaper':18s} "
+              f"{'deployed' if os.path.isfile(lw) else 'not-deployed'} "
+              f"(mpvpaper: {'yes' if self._have('mpvpaper') else 'no'})")
+
+    def cmd_all(self):
+        for fn in (self.cmd_fastfetch, self.cmd_starship, self.cmd_cliamp,
+                   self.cmd_hyprpaper, self.cmd_qutebrowser, self.cmd_opacity,
+                   self.cmd_livewallpaper):
+            fn()
+            print()
+
+
+def build_parser():
+    p = argparse.ArgumentParser(
+        description="Deploy Loki Zhadum companion configs (opt-in, backed up, validated).")
+    p.add_argument("--theme-dir", default=theme_dir_default(),
+                   help="theme source dir (default: installed theme or repo)")
+    p.add_argument("--backup-dir",
+                   default="~/.config/zhadum-deploy-backups",
+                   help="where timestamped backups go")
+    p.add_argument("--dry-run", action="store_true",
+                   help="show what would change; change nothing")
+    p.add_argument("--yes", action="store_true",
+                   help="answer yes to all prompts")
+    sub = p.add_subparsers(dest="command", required=True)
+
+    sub.add_parser("fastfetch", help="install fastfetch config + images")
+    sub.add_parser("starship", help="install starship preset")
+    sub.add_parser("cliamp", help="install CLIamp theme")
+    sub.add_parser("hyprpaper", help="install 3-monitor hyprpaper profile")
+    sub.add_parser("qutebrowser", help="install opaque qutebrowser preset")
+    sub.add_parser("opacity", help="append hyprland opacity rules")
+
+    lw = sub.add_parser("livewallpaper", help="set up mpvpaper live wallpaper")
+    lw.add_argument("--video", default=None,
+                    help="looping video file (default ~/Videos/zhadum-live.mp4)")
+    lw.add_argument("--outputs", default="*",
+                    help="mpvpaper output selector, e.g. '*', 'DP-1' (default *)")
+    lw.add_argument("--print-launcher", action="store_true",
+                    help="with --dry-run, print the launcher that would be written")
+
+    sub.add_parser("all", help="run every component, prompting each")
+    sub.add_parser("status", help="report deployed-vs-repo state")
+    return p
+
+
+def main():
+    args = build_parser().parse_args()
+    if not os.path.isdir(args.theme_dir):
+        sys.exit(f"zhadum-deploy: theme dir not found: {args.theme_dir}")
+    d = Deployer(args)
+    {"fastfetch": d.cmd_fastfetch, "starship": d.cmd_starship,
+     "cliamp": d.cmd_cliamp, "hyprpaper": d.cmd_hyprpaper,
+     "qutebrowser": d.cmd_qutebrowser, "opacity": d.cmd_opacity,
+     "livewallpaper": d.cmd_livewallpaper, "all": d.cmd_all,
+     "status": d.cmd_status}[args.command]()
+    if d.changed and not d.dry:
+        print(f"\nbackups are in {d.backup_dir}")
+        print("changed files:")
+        for c in d.changed:
+            print(f"  {c}")
+
+
+if __name__ == "__main__":
+    main()

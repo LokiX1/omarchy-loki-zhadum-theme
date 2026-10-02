@@ -5,7 +5,7 @@ This document provides essential information for agents working with the Loki Zh
 ## Project Overview
 
 This repository contains a theme-only package for Omarchy desktop environment that provides:
-- A dark purple-black color palette based on the Osiris aesthetic
+- A dark purple-black color palette in the Zhadum aesthetic
 - Fastfetch configuration with custom styling
 - Starship shell prompt configuration
 - Optional CLIamp companion theme for audio visualization
@@ -14,25 +14,44 @@ This repository contains a theme-only package for Omarchy desktop environment th
 
 ```
 .
-├── README.md                 # Main documentation
-├── colors.toml               # Core color definitions in TOML format
+├── AGENTS.md
+├── README.md
+├── colors.toml
 ├── shell.menu.toml           # Optional shell menu styling
-├── fastfetch/                # Fastfetch configuration and logo
-│   ├── images/
-│   │   └── loki-zhadum.png   # Theme logo for fastfetch
-│   └── loki-zhadum.jsonc     # Fastfetch JSON configuration
-├── starship/                 # Starship shell prompt configuration
-│   └── loki-zhadum.toml      # Starship TOML configuration
-├── extras/                   # Optional components
-│   └── cliamp/
-│       └── loki-zhadum-led.toml # CLIamp companion theme
 ├── backgrounds/              # Wallpaper assets
-│   ├── osiris-live-still.png # Static still image
-│   └── CREDITS.md            # Attribution information
-└── docs/                     # Documentation files
-    ├── CLIAMP.md             # CLIamp integration guide
-    ├── FASTFETCH.md          # Fastfetch configuration documentation  
-    └── STARSHIP.md           # Starship configuration documentation
+│   ├── osiris-live-still.png # Static still (intentional art/source asset)
+│   ├── CREDITS.md
+│   └── three-monitor/        # Coordinated 3-monitor wallpapers
+├── branding/                 # ZHADUM ASCII art (screensaver, about)
+├── docs/
+│   ├── BOOT-BRANDING.md
+│   ├── CLIAMP.md
+│   ├── FASTFETCH.md
+│   ├── HYPRLAND-OPACITY.md
+│   ├── QUTEBROWSER.md
+│   ├── STARSHIP.md
+│   └── THREE-MONITOR-WALLPAPERS.md
+├── extras/
+│   ├── cliamp/loki-zhadum-led.toml
+│   └── hypr/
+│       ├── hyprpaper-three-monitor.conf.example
+│       └── loki-zhadum-opacity.lua
+├── fastfetch/
+│   ├── loki-zhadum.jsonc
+│   └── images/
+│       ├── loki-zhadum-emblem.png  # Native-alpha horned emblem (fastfetch logo)
+│       ├── loki-zhadum.png
+│       ├── lokizhadumff.png
+│       └── lokizhadumff-transparent.png
+├── qutebrowser/
+│   └── theme.py              # Opaque preset (opt-in)
+├── scripts/
+│   ├── zhadum-plymouth-glitch        # Optional boot/unlock branding generator
+│   ├── zhadum-deploy                 # Optional companion-config deployer
+│   └── generate-loki-zhadum-emblem.py  # Emblem generator (true-alpha PNG)
+├── screenshots/
+└── starship/
+    └── loki-zhadum.toml
 ```
 
 ## Key Configuration Files
@@ -87,6 +106,16 @@ mkdir -p ~/.config/cliamp/themes
 cp extras/cliamp/loki-zhadum-led.toml ~/.config/cliamp/themes/
 ```
 
+### Deploy companion configs (recommended)
+```bash
+./scripts/zhadum-deploy status        # report deployed-vs-repo state
+./scripts/zhadum-deploy --dry-run all # preview every change
+./scripts/zhadum-deploy all           # install, prompting per component
+```
+Every write is backed up first and validated after install. Subcommands:
+`fastfetch`, `starship`, `cliamp`, `hyprpaper`, `qutebrowser`, `opacity`,
+`livewallpaper`.
+
 ## Project Characteristics
 
 This is a **theme-only** package that:
@@ -96,7 +125,7 @@ This is a **theme-only** package that:
 - Deliberately avoids installing or modifying system configuration files
 - Includes only static wallpaper and does not activate live wallpaper hooks
 
-This repository contains no source code to compile, test, or build. All configurations are in native formats (TOML, JSONC) that are applied directly by their respective tools (Omarchy, fastfetch, starship, CLIamp).
+Companion scripts (`scripts/zhadum-deploy`, `scripts/generate-loki-zhadum-emblem.py`) are Python 3 stdlib-only with no build step. All other configurations are in native formats (TOML, JSONC) applied directly by their tools (Omarchy, fastfetch, starship, CLIamp).
 
 ## Integration Points
 

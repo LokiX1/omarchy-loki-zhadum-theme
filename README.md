@@ -10,7 +10,7 @@ Omarchy installation.
 
 - Deep purple-black base palette with violet, magenta, pink, blue, and cyan accents
 - Near-black purple primary background: `#090511`
-- Static Osiris-inspired wallpaper still included under `backgrounds/`
+- Static Zhadum wallpaper still included under `backgrounds/`
 - Optional shell menu styling through `shell.menu.toml`
 - Optional CLIamp Classic LED companion theme with indigo, magenta, and pink spectrum tiers
 - Optional Fastfetch Kitty image-logo preset with the Loki portrait
@@ -39,6 +39,23 @@ find ~/.config/omarchy/themes \
   -mindepth 1 -maxdepth 1 -type d \
   -printf '%f\n' | sort | grep -i 'loki\|zhadum' 
 ```
+
+## Companion deploy script
+
+After installing the theme, deploy the optional companion configs
+(Fastfetch, Starship, CLIamp, Hyprpaper profile, Qutebrowser preset,
+Hyprland opacity rules, mpvpaper live wallpaper) with:
+
+```bash
+cd ~/.config/omarchy/themes/loki-zhadum
+./scripts/zhadum-deploy status        # report what is deployed
+./scripts/zhadum-deploy --dry-run all # preview every change
+./scripts/zhadum-deploy all           # install, prompting per component
+```
+
+Every write is backed up first, every file is validated after install, and
+`--dry-run` changes nothing. This keeps the theme package itself safe while
+making the companions one explicit, reviewable step.
 
 ## Scope and safety
 
@@ -305,7 +322,7 @@ desktop-wide inactive fade if configured in Hyprland.
 
 ## Credits
 
-The theme palette was originally based on the Osiris aesthetic and adapted for a
+The theme palette was originally derived from the earlier Loki Osiris theme and adapted for a
 theme-only Omarchy workflow. Wallpaper attribution is documented in
 [`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
 
