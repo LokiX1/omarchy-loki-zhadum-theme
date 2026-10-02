@@ -3,8 +3,8 @@
   "logo": {
     "type": "kitty",          // best for Kitty terminal
     "source": "~/.config/fastfetch/images/loki-zhadum-emblem.png",
-    "width": 41,              // adjust to your taste
-    "height": 29,
+    "width": 40,              // adjust to your taste
+    "height": 34,
     "padding": {
       "top": 1,
       "left": 2,
