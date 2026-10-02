@@ -53,8 +53,8 @@ The supplied image-logo layout uses:
 "logo": {
   "type": "kitty",
   "source": "~/.config/fastfetch/images/loki-zhadum-emblem.png",
-  "width": 41,
-  "height": 29,
+  "width": 40,
+  "height": 34,
   "padding": {
     "top": 1,
     "left": 2,

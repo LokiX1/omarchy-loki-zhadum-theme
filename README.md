@@ -13,7 +13,7 @@ Omarchy installation.
 - Static Zhadum wallpaper still included under `backgrounds/`
 - Optional shell menu styling through `shell.menu.toml`
 - Optional CLIamp Classic LED companion theme with indigo, magenta, and pink spectrum tiers
-- Optional Fastfetch Kitty image-logo preset with the Loki portrait
+- Optional Fastfetch Kitty image-logo preset with the horned Loki Zhadum emblem
 - Optional Bash Starship prompt companion preset
 - Designed for normal Omarchy theme installation and reuse across multiple machines
 
@@ -179,11 +179,11 @@ See [`docs/CLIAMP.md`](docs/CLIAMP.md) for companion-theme details.
 
 ## Fastfetch companion preset
 
-An optional Fastfetch configuration and portrait asset are included:
+An optional Fastfetch configuration and emblem asset are included:
 
 ```text
 fastfetch/loki-zhadum.jsonc
-fastfetch/images/loki-zhadum.png
+fastfetch/images/loki-zhadum-emblem.png
 ```
 
 ![Loki Zhadum Fastfetch and Starship preview](screenshots/loki-zhadum-fastfetch-starship.png)
@@ -202,15 +202,15 @@ To use it as your default Fastfetch configuration:
 mkdir -p ~/.config/fastfetch/images
 
 cp \
-  ~/.config/omarchy/themes/loki-zhadum/fastfetch/images/loki-zhadum.png \
-  ~/.config/fastfetch/images/loki-zhadum.png
+  ~/.config/omarchy/themes/loki-zhadum/fastfetch/images/loki-zhadum-emblem.png \
+  ~/.config/fastfetch/images/loki-zhadum-emblem.png
 
 cp \
   ~/.config/omarchy/themes/loki-zhadum/fastfetch/loki-zhadum.jsonc \
   ~/.config/fastfetch/config.jsonc
 ```
 
-The bundled portrait layout uses an image width of 41 columns, a height of 29
+The bundled emblem layout uses an image width of 40 columns, a height of 34
 rows, and padding of 1 top row plus 2 columns on each side. See
 [`docs/FASTFETCH.md`](docs/FASTFETCH.md) for details.
 
@@ -258,8 +258,8 @@ extras/hypr/loki-zhadum-opacity.lua
 The snippet matches the Loki Zhadum desktop preference:
 
 - Focused normal windows: 1.00 opacity
-- Inactive normal windows: 0.98 opacity
-- Inactive Chromium- and Firefox-family browsers: 0.98 opacity
+- Inactive normal windows: 0.99 opacity
+- Inactive Chromium- and Firefox-family browsers: 0.99 opacity
 - Video-playing windows: 1.00 opacity
 
 Omarchy 4.0.3 defines its default opacity rules outside the theme-template
@@ -282,12 +282,16 @@ DP-1  Center ultrawide        → Roche
 DP-3  Right portrait display  → Outland
 ```
 
-![Loki Zhadum three-monitor clean layout](screenshots/loki-zhadum-three-monitor-clean-layout.jpg)
+![Loki Zhadum three-monitor clean layout](screenshots/loki-zhadum-three-monitor-clean-layout.png)
 
 ![Loki Zhadum three-monitor desktop](screenshots/loki-zhadum-three-monitor-desktop.png)
 
 The first preview shows the three wallpapers without applications covering them.
 The second shows the same setup in active desktop use.
+
+> Screenshots above show the current per-monitor mpvpaper setup with a
+> custom wallpaper triptych; the bundled Hyprpaper profile ships the
+> Caelum / Roche / Outland stills listed below.
 
 The profile is intentionally opt-in because monitor connector names and display
 layouts vary between systems. It does not run automatically when the theme is
