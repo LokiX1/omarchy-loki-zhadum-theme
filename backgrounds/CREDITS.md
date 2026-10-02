@@ -22,3 +22,15 @@ removed.
 This file lives next to the asset on purpose — the install step copies this
 whole theme directory, so the attribution travels with the wallpaper rather
 than being stranded in the repo root.
+
+## Zhadum triptych
+
+`backgrounds/zhadum-triptych/` holds three AI-generated wallpapers made for
+this theme:
+
+- `niflheim-left-portrait-2160x3840.jpg` — aurora over a Nordic fjord (DP-2, left portrait)
+- `zhadum-center-5120x2160.jpg` — nebula cityscape (DP-1, center ultrawide)
+- `galdr-right-portrait-2160x3840.jpg` — rune-carved spire (DP-3, right portrait)
+
+These were generated for the theme owner and are safe to share and
+redistribute with the theme. No third-party rights apply.

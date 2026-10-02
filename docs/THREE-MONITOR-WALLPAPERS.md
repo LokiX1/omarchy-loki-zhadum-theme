@@ -3,11 +3,11 @@
 Loki Zhadum includes an optional static Hyprpaper profile with three coordinated
 wallpapers.
 
-![Loki Zhadum three-monitor clean layout](../screenshots/loki-zhadum-three-monitor-clean-layout.jpg)
+![Loki Zhadum three-monitor clean layout](../screenshots/loki-zhadum-three-monitor-clean-layout.png)
 
 ![Loki Zhadum three-monitor desktop](../screenshots/loki-zhadum-three-monitor-desktop.png)
 
-![Loki Zhadum three-monitor wallpaper set](../screenshots/loki-zhadum-three-monitor-wallpapers.jpg)
+![Loki Zhadum three-monitor wallpaper set](../screenshots/archive/loki-zhadum-three-monitor-wallpapers.jpg)
 
 The first preview shows the complete three-monitor wallpaper layout without
 applications covering the backgrounds. The second shows Loki Zhadum in active

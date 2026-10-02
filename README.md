@@ -273,14 +273,23 @@ installation procedure.
 
 ## Three-monitor wallpapers
 
-Loki Zhadum includes an optional static Hyprpaper profile for a tested
-three-monitor layout:
+The current Loki Zhadum desktop runs a coordinated wallpaper triptych,
+one image per monitor through `mpvpaper`:
 
 ```text
-DP-2  Left portrait display   → Caelum
-DP-1  Center ultrawide        → Roche
-DP-3  Right portrait display  → Outland
+DP-2  Left portrait display   → Niflheim  (aurora over a Nordic fjord)
+DP-1  Center ultrawide        → Zhadum    (nebula cityscape)
+DP-3  Right portrait display  → Galdr     (rune-carved spire)
 ```
+
+```text
+backgrounds/zhadum-triptych/niflheim-left-portrait-2160x3840.jpg
+backgrounds/zhadum-triptych/zhadum-center-5120x2160.jpg
+backgrounds/zhadum-triptych/galdr-right-portrait-2160x3840.jpg
+```
+
+The triptych was generated for this theme and is safe to share and
+redistribute — see [`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
 
 ![Loki Zhadum three-monitor clean layout](screenshots/loki-zhadum-three-monitor-clean-layout.png)
 
@@ -289,13 +298,11 @@ DP-3  Right portrait display  → Outland
 The first preview shows the three wallpapers without applications covering them.
 The second shows the same setup in active desktop use.
 
-> Screenshots above show the current per-monitor mpvpaper setup with a
-> custom wallpaper triptych; the bundled Hyprpaper profile ships the
-> Caelum / Roche / Outland stills listed below.
-
-The profile is intentionally opt-in because monitor connector names and display
-layouts vary between systems. It does not run automatically when the theme is
-installed or selected.
+The repository also includes an optional static Hyprpaper profile with an
+earlier three-monitor set (Caelum / Roche / Outland). It is intentionally
+opt-in because monitor connector names and display layouts vary between
+systems, and it does not run automatically when the theme is installed or
+selected.
 
 See [`docs/THREE-MONITOR-WALLPAPERS.md`](docs/THREE-MONITOR-WALLPAPERS.md) for
 installation, monitor-name checks, Hyprpaper setup, and compatibility notes.
