@@ -42,9 +42,7 @@ find ~/.config/omarchy/themes \
 
 ## Companion deploy script
 
-After installing the theme, deploy the optional companion configs
-(Fastfetch, Starship, CLIamp, Hyprpaper profile, Qutebrowser preset,
-Hyprland opacity rules, mpvpaper live wallpaper) with:
+After installing the theme, deploy the optional companion configs with:
 
 ```bash
 cd ~/.config/omarchy/themes/loki-zhadum
@@ -53,9 +51,30 @@ cd ~/.config/omarchy/themes/loki-zhadum
 ./scripts/zhadum-deploy all           # install, prompting per component
 ```
 
-Every write is backed up first, every file is validated after install, and
-`--dry-run` changes nothing. This keeps the theme package itself safe while
-making the companions one explicit, reviewable step.
+Each component also installs standalone:
+
+```text
+fastfetch          Fastfetch config + logo images  -> ~/.config/fastfetch/
+starship           Starship prompt                 -> ~/.config/starship.toml
+cliamp             CLIamp LED theme                -> ~/.config/cliamp/themes/
+hyprpaper          3-monitor Hyprpaper profile     -> ~/.config/hypr/hyprpaper.conf
+qutebrowser        Opaque Qutebrowser preset       -> ~/.config/qutebrowser/theme.py
+opacity            Hyprland inactive-fade rules    -> appended to looknfeel.lua
+livewallpaper      mpvpaper video-loop setup       -> launcher + autostart help
+wallpaper-service  mpvpaper keep-alive service     -> starts on login, restarts on failure
+status             report deployed vs. repo state (no changes)
+```
+
+Safety rules (non-negotiable):
+
+- Every write is backed up first into a timestamped backup dir.
+- `--dry-run` shows exactly what would change, changing nothing.
+- Every installed file is validated after writing.
+- Nothing is deleted; the opacity snippet is idempotent via markers.
+
+This keeps the theme package itself safe while making the companions one
+explicit, reviewable step. The manual steps in each section below are the
+by-hand equivalent, for when you'd rather not run the script.
 
 ## Scope and safety
 
@@ -155,6 +174,8 @@ included:
 extras/cliamp/loki-zhadum-led.toml
 ```
 
+> Prefer the script: `./scripts/zhadum-deploy cliamp` — what follows is the manual equivalent.
+
 Install it manually:
 
 ```bash
@@ -185,6 +206,8 @@ An optional Fastfetch configuration and emblem asset are included:
 fastfetch/loki-zhadum.jsonc
 fastfetch/images/loki-zhadum-emblem.png
 ```
+
+> Prefer the script: `./scripts/zhadum-deploy fastfetch` — what follows is the manual equivalent.
 
 ![Loki Zhadum Fastfetch and Starship preview](screenshots/loki-zhadum-fastfetch-starship.png)
 
@@ -222,6 +245,8 @@ An optional Starship prompt configuration for Bash is included:
 starship/loki-zhadum.toml
 ```
 
+> Prefer the script: `./scripts/zhadum-deploy starship` — what follows is the manual equivalent.
+
 Preview it in a temporary Bash shell:
 
 ```bash
@@ -245,7 +270,6 @@ cp \
 See [`docs/STARSHIP.md`](docs/STARSHIP.md) for temporary and persistent
 `STARSHIP_CONFIG` override options.
 
-
 ## Hyprland opacity companion
 
 Loki Zhadum includes an optional Hyprland rule snippet for a subtle
@@ -267,6 +291,8 @@ system, so this setting is intentionally **not applied automatically** by
 `omarchy theme install`. It is supplied as a small, reviewable companion
 snippet rather than replacing your personal
 `~/.config/hypr/looknfeel.lua`.
+
+> Prefer the script: `./scripts/zhadum-deploy opacity` — what follows is the manual equivalent.
 
 See [`docs/HYPRLAND-OPACITY.md`](docs/HYPRLAND-OPACITY.md) for the safe
 installation procedure.
@@ -316,6 +342,8 @@ opt-in because monitor connector names and display layouts vary between
 systems, and it does not run automatically when the theme is installed or
 selected.
 
+> Prefer the script: `./scripts/zhadum-deploy hyprpaper` — what follows is the manual equivalent.
+
 See [`docs/THREE-MONITOR-WALLPAPERS.md`](docs/THREE-MONITOR-WALLPAPERS.md) for
 installation, monitor-name checks, Hyprpaper setup, and compatibility notes.
 
@@ -338,6 +366,8 @@ Loki Zhadum includes an optional opaque Qutebrowser UI preset and a companion
 Hyprland opacity rule. This prevents the browser from inheriting an overly
 strong terminal-style `0.90 / 0.85` opacity rule while retaining a subtle
 desktop-wide inactive fade if configured in Hyprland.
+
+> Prefer the script: `./scripts/zhadum-deploy qutebrowser` — what follows is the manual equivalent.
 
 - Opaque UI preset: [`qutebrowser/theme.py`](qutebrowser/theme.py)
 - Setup and recovery guide: [`docs/QUTEBROWSER.md`](docs/QUTEBROWSER.md)
