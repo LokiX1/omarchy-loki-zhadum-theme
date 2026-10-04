@@ -298,6 +298,18 @@ redistribute — see [`backgrounds/CREDITS.md`](backgrounds/CREDITS.md).
 The first preview shows the three wallpapers without applications covering them.
 The second shows the same setup in active desktop use.
 
+**Keep-alive service:** `mpvpaper` is unsupervised by default, so this
+repo ships a systemd user service that keeps one mpvpaper per monitor
+alive (starts on login, restarts on failure):
+
+```bash
+cd ~/.config/omarchy/themes/loki-zhadum
+./scripts/zhadum-deploy wallpaper-service
+```
+
+See [`docs/WALLPAPER-SERVICE.md`](docs/WALLPAPER-SERVICE.md) for the files,
+manual install, verification, and removal.
+
 The repository also includes an optional static Hyprpaper profile with an
 earlier three-monitor set (Caelum / Roche / Outland). It is intentionally
 opt-in because monitor connector names and display layouts vary between

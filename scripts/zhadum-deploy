@@ -14,6 +14,7 @@ touch, each as an explicit, reviewable, reversible step:
     qutebrowser    Opaque Qutebrowser preset       -> ~/.config/qutebrowser/theme.py
     opacity        Hyprland inactive-fade rules    -> appended to looknfeel.lua
     livewallpaper  mpvpaper live-wallpaper setup   -> launcher + autostart help
+    wallpaper-service  mpvpaper keep-alive systemd service -> starts on login, restarts on failure
     all            everything above, prompting per component
     status         report what is deployed vs. the repo (no changes)
 
@@ -246,9 +247,9 @@ class Deployer:
         self.log("== live wallpaper (mpvpaper) ==")
         self.log("  mpvpaper draws a looping video on a layer-shell surface.")
         self.log("  hyprpaper must be stood down or they fight over the layer.")
-        video = self.args.video or os.path.join(
+        video = getattr(self.args, "video", None) or os.path.join(
             HOME, "Videos", "zhadum-live.mp4")
-        outputs = self.args.outputs or "*"
+        outputs = getattr(self.args, "outputs", None) or "*"
         if not self._have("mpvpaper"):
             self.log("  mpvpaper is not installed.")
             if self.confirm("Install it now via 'yay -S --needed mpvpaper'?"):
@@ -267,7 +268,7 @@ class Deployer:
             self.log(f"  video not found: {video}")
             self.log("  The repo cannot ship video (GitHub size limits).")
             self.log("  Place your loop there, or re-run with --video PATH.")
-            if not self.args.video:
+            if not getattr(self.args, "video", None):
                 return
         launcher = os.path.join(HOME, ".config", "hypr",
                                 "zhadum-livewallpaper.sh")
@@ -291,7 +292,7 @@ class Deployer:
         self.backup(launcher)
         if self.dry:
             self.log("  [dry-run] would write launcher (see --print-launcher)")
-            if self.args.print_launcher:
+            if getattr(self.args, "print_launcher", False):
                 print(body)
             return
         os.makedirs(os.path.dirname(launcher), exist_ok=True)
@@ -312,6 +313,105 @@ class Deployer:
         self.log("")
         self.log("  Test now (replaces your wallpaper until Hyprland exits):")
         self.log(f"    {launcher}")
+
+    def cmd_wallpaper_service(self):
+        self.log("== wallpaper keep-alive service (mpvpaper) ==")
+        self.log("  Installs a systemd user service that keeps one mpvpaper")
+        self.log("  per monitor alive: starts on login, restarts on failure.")
+        if not self._have("mpvpaper"):
+            self.log("  mpvpaper is not installed.")
+            if self.confirm("Install it now via 'yay -S --needed mpvpaper'?"):
+                if self.dry:
+                    self.log("  [dry-run] would run: yay -S --needed mpvpaper")
+                else:
+                    rc = subprocess.run(
+                        ["yay", "-S", "--needed", "mpvpaper"]).returncode
+                    if rc != 0:
+                        sys.exit("zhadum-deploy: yay failed; install mpvpaper "
+                                 "manually and re-run")
+            else:
+                self.log("  skipping wallpaper-service setup")
+                return
+        # Wallpapers: keep an existing ~/backgrounds/zhadum/ as-is,
+        # otherwise seed it from the repo triptych.
+        pairs = [
+            ("backgrounds/zhadum-triptych/niflheim-left-portrait-2160x3840.jpg",
+             "zhadum-left-2160x3840.jpg"),
+            ("backgrounds/zhadum-triptych/zhadum-center-5120x2160.jpg",
+             "zhadum-center-5120x2160.jpg"),
+            ("backgrounds/zhadum-triptych/galdr-right-portrait-2160x3840.jpg",
+             "zhadum-right-2160x3840.jpg"),
+        ]
+        bgdir = os.path.join(HOME, "backgrounds", "zhadum")
+        for repo_rel, dest_name in pairs:
+            src = self.need_theme_file(repo_rel)
+            dest = os.path.join(bgdir, dest_name)
+            if os.path.isfile(dest):
+                self.log(f"  keeping existing {dest}")
+                continue
+            if not self.confirm(f"Copy {dest_name} to ~/backgrounds/zhadum/?"):
+                self.log("  skipping wallpaper seeding "
+                         "(the service needs those files)")
+                return
+            self.install_file(src, dest)
+        # Wrapper + unit.
+        wrapper_src = self.need_theme_file(
+            "extras/systemd/zhadum-wallpapers-service.sh")
+        unit_src = self.need_theme_file(
+            "extras/systemd/zhadum-wallpapers.service")
+        wrapper_dest = os.path.join(HOME, ".config", "hypr",
+                                    "zhadum-wallpapers-service.sh")
+        unit_dest = os.path.join(HOME, ".config", "systemd", "user",
+                                 "zhadum-wallpapers.service")
+        if not self.confirm("Install the keep-alive service files?"):
+            return
+        self.install_file(wrapper_src, wrapper_dest, mode=0o755)
+        self.install_file(unit_src, unit_dest)
+        # Make the autostart launcher defer to the service while active,
+        # so a Hyprland reload does not spawn duplicate mpvpaper sets.
+        launcher = os.path.join(HOME, ".config", "hypr",
+                                "zhadum-wallpapers.sh")
+        defer = ("if systemctl --user is-active --quiet "
+                 "zhadum-wallpapers.service 2>/dev/null; then\n"
+                 "  exit 0\n"
+                 "fi\n")
+        if os.path.isfile(launcher) and defer not in open(launcher).read():
+            self.log(f"  patching {launcher} to defer to the service")
+            self.backup(launcher)
+            if not self.dry:
+                text = open(launcher).read()
+                if "set -u\n" in text:
+                    text = text.replace("set -u\n", "set -u\n\n" + defer, 1)
+                    open(launcher, "w").write(text)
+                    self.changed.append(launcher)
+                else:
+                    self.log("  could not patch launcher "
+                             "(no 'set -u' line); skipping")
+        else:
+            self.log("  launcher already defers to the service "
+                     "(or is not present)")
+        self.log("  reloading systemd and enabling the service")
+        if self.dry:
+            self.log("  [dry-run] would run: systemctl --user daemon-reload")
+            self.log("  [dry-run] would run: systemctl --user enable --now "
+                     "zhadum-wallpapers.service")
+            return
+        subprocess.run(["systemctl", "--user", "daemon-reload"], check=False)
+        rc = subprocess.run(["systemctl", "--user", "enable", "--now",
+                             "zhadum-wallpapers.service"]).returncode
+        if rc != 0:
+            sys.exit("zhadum-deploy: failed to enable the service")
+        import time
+        time.sleep(3)
+        st = subprocess.run(["systemctl", "--user", "is-active",
+                             "zhadum-wallpapers.service"],
+                            capture_output=True, text=True).stdout.strip()
+        n = subprocess.run(["pgrep", "-c", "-x", "mpvpaper"],
+                           capture_output=True, text=True).stdout.strip()
+        self.log(f"  service state: {st} (mpvpaper processes: {n})")
+        if st != "active":
+            sys.exit("zhadum-deploy: service is not active; see "
+                     "'systemctl --user status zhadum-wallpapers.service'")
 
     # -- status / all --------------------------------------------------
     def _cmp(self, repo_rel, live_path):
@@ -348,11 +448,17 @@ class Deployer:
         print(f"  {'live wallpaper':18s} "
               f"{'deployed' if os.path.isfile(lw) else 'not-deployed'} "
               f"(mpvpaper: {'yes' if self._have('mpvpaper') else 'no'})")
+        ws = subprocess.run(["systemctl", "--user", "is-active",
+                             "zhadum-wallpapers.service"],
+                            capture_output=True, text=True).stdout.strip()
+        wn = subprocess.run(["pgrep", "-c", "-x", "mpvpaper"],
+                            capture_output=True, text=True).stdout.strip()
+        print(f"  {'wallpaper service':18s} {ws} (mpvpaper: {wn})")
 
     def cmd_all(self):
         for fn in (self.cmd_fastfetch, self.cmd_starship, self.cmd_cliamp,
                    self.cmd_hyprpaper, self.cmd_qutebrowser, self.cmd_opacity,
-                   self.cmd_livewallpaper):
+                   self.cmd_livewallpaper, self.cmd_wallpaper_service):
             fn()
             print()
 
@@ -386,6 +492,8 @@ def build_parser():
     lw.add_argument("--print-launcher", action="store_true",
                     help="with --dry-run, print the launcher that would be written")
 
+    sub.add_parser("wallpaper-service",
+                     help="install mpvpaper keep-alive systemd service")
     sub.add_parser("all", help="run every component, prompting each")
     sub.add_parser("status", help="report deployed-vs-repo state")
     return p
@@ -399,7 +507,7 @@ def main():
     {"fastfetch": d.cmd_fastfetch, "starship": d.cmd_starship,
      "cliamp": d.cmd_cliamp, "hyprpaper": d.cmd_hyprpaper,
      "qutebrowser": d.cmd_qutebrowser, "opacity": d.cmd_opacity,
-     "livewallpaper": d.cmd_livewallpaper, "all": d.cmd_all,
+     "livewallpaper": d.cmd_livewallpaper, "wallpaper-service": d.cmd_wallpaper_service, "all": d.cmd_all,
      "status": d.cmd_status}[args.command]()
     if d.changed and not d.dry:
         print(f"\nbackups are in {d.backup_dir}")
