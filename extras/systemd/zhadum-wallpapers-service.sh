@@ -28,9 +28,9 @@ fi
 pkill -x mpvpaper 2>/dev/null || true
 sleep 0.5
 
-mpvpaper -l bottom -o "no-audio --loop" DP-2 "$BG/zhadum-left-2160x3840.jpg" &
-mpvpaper -l bottom -o "no-audio --loop" DP-1 "$BG/zhadum-center-5120x2160.jpg" &
-mpvpaper -l bottom -o "no-audio --loop" DP-3 "$BG/zhadum-right-2160x3840.jpg" &
+mpvpaper -l bottom -o "no-audio --loop" DP-1 "$BG/zhadum-left-2160x3840.jpg" &
+mpvpaper -l bottom -o "no-audio --loop" DP-3 "$BG/zhadum-center-5120x2160.jpg" &
+mpvpaper -l bottom -o "no-audio --loop" DP-2 "$BG/zhadum-right-2160x3840.jpg" &
 wait -n
 echo "zhadum-wallpapers: an mpvpaper instance exited, restarting" >&2
 exit 1
